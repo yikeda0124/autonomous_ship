@@ -24,8 +24,8 @@ const int minUs = 1100;
 const int servo1Pin = 25;
 const int servo2Pin = 26;
 const int servo3Pin = 27;
-const int huskyPin1 = 34;
-const int huskyPin2 = 35;
+const int huskyPin1 = 16;
+const int huskyPin2 = 17;
 const int ElemagnetPin1 = 12;
 const int value_straight1 = 1550; // decide me!
 const int value_straight2 = 1500;
@@ -105,14 +105,14 @@ void go_straight(int tim){
 }
 
 bool look_for_qr(){
-//  if (!huskylens.request()) Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
-//  else if(!huskylens.isLearned()) Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
-//  else if(!huskylens.available()) Serial.println(F("No block or arrow appears on the screen!"));
-//  else{
-//    HUSKYLENSResult result = huskylens.read();
-//    printResult(result);  
-//    return true;
-//  }
+  if (!huskylens.request()) Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
+  else if(!huskylens.isLearned()) Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
+  else if(!huskylens.available()) Serial.println(F("No block or arrow appears on the screen!"));
+  else{
+    HUSKYLENSResult result = huskylens.read();
+    printResult(result);  
+    return true;
+  }
   return false;
 }
 
@@ -131,6 +131,7 @@ void autonomous_main(){
       Blynk.run();
     }
     while(result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin){
+      Blynk.run();
       if (result.xCenter <= value_xmargin){
         turn_right(10);// decide me!
       }

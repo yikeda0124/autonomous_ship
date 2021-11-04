@@ -27,12 +27,16 @@ const int servo3Pin = 27;
 const int huskyPin1 = 34;
 const int huskyPin2 = 35;
 const int ElemagnetPin1 = 12;
-const int value_straight1 = 1900; // decide me!
-const int value_straight2 = 1900;
-const int value_straight3 = 1900;
-const int value_right1 = 1900; // decide me!
-const int value_right2 = 1900;
-const int value_right3 = 1900;
+const int value_straight1 = 1550; // decide me!
+const int value_straight2 = 1500;
+const int value_straight3 = 1500;
+const int value_right1 = 1500; // decide me!
+const int value_right2 = 1450;
+const int value_right3 = 1450;
+const int value_left1 = 1500; // decide me!
+const int value_left2 = 1550;
+const int value_left3 = 1550;
+const int value_xmargin = 0; // decide me!
 
 SoftwareSerial huskySerial(huskyPin1, huskyPin2);
 
@@ -66,7 +70,7 @@ void loop()
   }else{
     stop_servos();
   }
-  digitalWrite(ElemagnetPin1,High);
+  //digitalWrite(ElemagnetPin1,High);
 }
 
 void stop_servos(){
@@ -80,6 +84,14 @@ void turn_right(int tim){
   servo1.writeMicroseconds(value_right1);
   servo2.writeMicroseconds(value_right2);
   servo3.writeMicroseconds(value_right3);
+  delay(tim);
+  stop_servos();
+}
+
+void turn_left(int tim){
+  servo1.writeMicroseconds(value_leftt1);
+  servo2.writeMicroseconds(value_left2);
+  servo3.writeMicroseconds(value_left3);
   delay(tim);
   stop_servos();
 }
@@ -118,12 +130,19 @@ void autonomous_main(){
       delay(100);
       Blynk.run();
     }
+    while(result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin){
+      if (result.xCenter <= value_xmargin){
+        turn_right(10);// decide me!
+      }
+      else if (result.xCenter >= 320 - value_xmargin){
+        turn_left(10);//decide me!
+      }
+    }     
     go_straight(1000);
+
     Blynk.run();
-    
   }
   Serial.println("quit mode");
-
 }
 
 void printResult(HUSKYLENSResult result){

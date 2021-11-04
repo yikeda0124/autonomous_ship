@@ -26,6 +26,7 @@ const int servo2Pin = 26;
 const int servo3Pin = 27;
 const int huskyPin1 = 34;
 const int huskyPin2 = 35;
+const int ElemagnetPin1 = 12;
 const int value_straight1 = 1900; // decide me!
 const int value_straight2 = 1900;
 const int value_straight3 = 1900;
@@ -65,6 +66,7 @@ void loop()
   }else{
     stop_servos();
   }
+  digitalWrite(ElemagnetPin1,High);
 }
 
 void stop_servos(){
@@ -118,8 +120,10 @@ void autonomous_main(){
     }
     go_straight(1000);
     Blynk.run();
+    
   }
   Serial.println("quit mode");
+
 }
 
 void printResult(HUSKYLENSResult result){
@@ -144,15 +148,15 @@ BLYNK_WRITE(V2){
 
 BLYNK_WRITE(V5){
   double value = param[0].asDouble();
-  value_servo1 = (value/255.0-0.5)*800+1500;
+  value_servo1 = (value/255.0-0.5)*100+1500;
 }
 
 BLYNK_WRITE(V6){
   double value = param[0].asDouble();
-  value_servo2 = (value/255.0-0.5)*800+1500;
+  value_servo2 = (value/255.0-0.5)*100+1500;
 }
 
 BLYNK_WRITE(V7){
   double value = param[0].asDouble();
-  value_servo3 = (value/255.0-0.5)*800+1500;
+  value_servo3 = (value/255.0-0.5)*100+1500;
 }

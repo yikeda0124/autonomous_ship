@@ -22,16 +22,21 @@ Servo servo3;
 const int maxUs = 1900;
 const int minUs = 1100;
 const int servo1Pin = 25;
-const int servo2Pin = 18;
-const int servo3Pin = 23;
-const int huskyPin1 = 16;
-const int huskyPin2 = 17;
+const int servo2Pin = 26;
+const int servo3Pin = 27;
+const int huskyPin1 = 35;
+const int huskyPin2 = 34;
 const int value_straight1 = 1900; // decide me!
 const int value_straight2 = 1900;
 const int value_straight3 = 1900;
 const int value_right1 = 1900; // decide me!
 const int value_right2 = 1900;
 const int value_right3 = 1900;
+const int value_left1 = 1900; // decide me!
+const int value_left2 = 1900;
+const int value_left3 = 1900;
+const int value_xmargin = 0; // decide me!
+
 
 SoftwareSerial huskySerial(huskyPin1, huskyPin2);
 
@@ -82,6 +87,16 @@ void turn_right(int tim){
   stop_servos();
 }
 
+
+void turn_left(int tim){
+  servo1.writeMicroseconds(value_left1);
+  servo2.writeMicroseconds(value_left2);
+  servo3.writeMicroseconds(value_left3);
+  delay(tim);
+  stop_servos();
+}
+
+
 void go_straight(int tim){
   servo1.writeMicroseconds(value_straight1);
   servo2.writeMicroseconds(value_straight2);
@@ -116,12 +131,20 @@ void autonomous_main(){
       delay(100);
       Blynk.run();
     }
+    while(result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin){
+      if (result.xCenter <= value_xmargin){
+        turn_right(10);// decide me!
+      }
+      else if (result.xCenter >= 320 - value_xmargin){
+        turn_left(10);//decide me!
+      }
+    }      
     go_straight(1000);
     Blynk.run();
-  }
+  }//近づいた時にどうするか+回転止める
   Serial.println("quit mode");
 }
-
+//320*240左上原点,横x軸縦y
 void printResult(HUSKYLENSResult result){
     if (result.command == COMMAND_RETURN_BLOCK){
         Serial.println(String()+F("Block:xCenter=")+result.xCenter+F(",yCenter=")+result.yCenter+F(",width=")+result.width+F(",height=")+result.height+F(",ID=")+result.ID);

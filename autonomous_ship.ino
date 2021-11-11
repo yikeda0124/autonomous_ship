@@ -36,7 +36,7 @@ const int value_right3 = 1450;
 const int value_left1 = 1500; // decide me!
 const int value_left2 = 1550;
 const int value_left3 = 1550;
-const int value_xmargin = 0; // decide me!
+const int value_xmargin = 100; // decide me!
 
 //ID==2のQRコードのとき（十分近づいたとき）
 const int value_near_straight1 = 1550; // decide me!
@@ -48,7 +48,7 @@ const int value_near_right3 = 1450;
 const int value_near_left1 = 1500; // decide me!
 const int value_near_left2 = 1550;
 const int value_near_left3 = 1550;
-const int value_near_xmargin = 0; // decide me!
+const int value_near_xmargin = 130; // decide me!
 
 
 
@@ -169,10 +169,10 @@ void autonomous_main(){
       }
       while(result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin){
         if (result.xCenter <= value_xmargin){
-          turn_right(10, 'a');// decide me!
+          turn_right(50, 'a');// decide me!
         }
         else if (result.xCenter >= 320 - value_xmargin){
-          turn_left(10, 'a');//decide me!
+          turn_left(50, 'a');//decide me!
         }
       }      
       go_straight(1000, 'a');

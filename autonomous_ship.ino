@@ -16,6 +16,7 @@ int value_servo3 = 1900;
 bool is_power_on = false;
 bool is_autonomous_mode = false;
 
+HUSKYLENSResult result;
 Servo servo1;
 Servo servo2;
 Servo servo3;
@@ -110,7 +111,7 @@ bool look_for_qr(){
   else if(!huskylens.isLearned()) Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
   else if(!huskylens.available()) Serial.println(F("No block or arrow appears on the screen!"));
   else{
-    HUSKYLENSResult result = huskylens.read();
+    result = huskylens.read();
     printResult(result);  
     return true;
   }

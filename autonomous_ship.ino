@@ -36,7 +36,7 @@ const int value_right3 = 1450;
 const int value_left1 = 1500; // decide me!
 const int value_left2 = 1550;
 const int value_left3 = 1550;
-const int value_xmargin = 80; // decide me!
+const int value_xmargin = 50; // decide me!
 
 //ID==2のQRコードのとき（十分近づいたとき）
 const int value_near_straight1 = 1550; // decide me!
@@ -48,7 +48,7 @@ const int value_near_right3 = 1450;
 const int value_near_left1 = 1500; // decide me!
 const int value_near_left2 = 1550;
 const int value_near_left3 = 1550;
-const int value_near_xmargin = 50; // decide me!
+const int value_near_xmargin = 60; // decide me!
 
 
 
@@ -164,7 +164,7 @@ void autonomous_main(){
     bool find_qr = look_for_qr();
     while(!find_qr && is_autonomous_mode && is_power_on){
       turn_right(100, 'a');
-      delay(2000);
+      delay(1500);
       find_qr = look_for_qr();
       Blynk.run();    
     }
@@ -183,7 +183,7 @@ void autonomous_main(){
       }
       if (is_center(result.xCenter)){
         go_straight(300, 'a');
-        delay(2000);
+        delay(500);
       }
       Blynk.run();
     }else if (result.ID == 2){
@@ -201,7 +201,7 @@ void autonomous_main(){
       }
       if (is_center(result.xCenter)){
         go_straight(300, 'n');
-        delay(2000);
+        delay(500);
       }
       Blynk.run();
     }

@@ -36,7 +36,7 @@ const int value_right3 = 1450;
 const int value_left1 = 1500; // decide me!
 const int value_left2 = 1550;
 const int value_left3 = 1550;
-const int value_xmargin = 100; // decide me!
+const int value_xmargin = 50; // decide me!
 
 //ID==2のQRコードのとき（十分近づいたとき）
 const int value_near_straight1 = 1550; // decide me!
@@ -48,7 +48,7 @@ const int value_near_right3 = 1450;
 const int value_near_left1 = 1500; // decide me!
 const int value_near_left2 = 1550;
 const int value_near_left3 = 1550;
-const int value_near_xmargin = 130; // decide me!
+const int value_near_xmargin = 50; // decide me!
 
 
 
@@ -147,6 +147,7 @@ bool look_for_qr(){
     printResult(result);  
     return true;
   }
+  
   return false;
 }
 
@@ -157,7 +158,7 @@ void autonomous_main(){
     bool find_qr = look_for_qr();
     if (result.ID == 1){      
       while(!find_qr && is_autonomous_mode && is_power_on){
-        turn_right(500, 'a');
+        turn_right(50, 'a');
         delay(2000);
         for (int trial = 0; trial < 10; trial++){
           find_qr = look_for_qr();
@@ -167,15 +168,17 @@ void autonomous_main(){
         delay(100);
         Blynk.run();
       }
-      while(result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin){
+      while(find_qr && (result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin) && is_autonomous_mode && is_power_on){
+        Blynk.run();
         if (result.xCenter <= value_xmargin){
-          turn_right(50, 'a');// decide me!
+          turn_right(10, 'a');// decide me!
         }
         else if (result.xCenter >= 320 - value_xmargin){
-          turn_left(50, 'a');//decide me!
+          turn_left(10, 'a');//decide me!
         }
-      }      
-      go_straight(1000, 'a');
+        find_qr = look_for_qr();
+      }
+      go_straight(500, 'a');
       Blynk.run();
     } else if (result.ID == 2){
       //ID==2のQRコードのみ見えているとき
@@ -190,15 +193,17 @@ void autonomous_main(){
           delay(100);
           Blynk.run();
         }
-        while(result.xCenter <= value_near_xmargin || result.xCenter >= 320 - value_near_xmargin){
+        while(find_qr && (result.xCenter <= value_near_xmargin || result.xCenter >= 320 - value_near_xmargin) && is_autonomous_mode && is_power_on){
+          Blynk.run();
           if (result.xCenter <= value_near_xmargin){
             turn_right(10, 'n');// decide me!
           }
           else if (result.xCenter >= 320 - value_near_xmargin){
             turn_left(10, 'n');//decide me!
           }
+          find_qr = look_for_qr();
         }      
-        go_straight(1000, 'n');//decide me!
+        go_straight(300, 'n');//decide me!
         Blynk.run();
     }
     

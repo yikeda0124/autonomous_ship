@@ -164,6 +164,7 @@ void autonomous_main(){
     bool find_qr = look_for_qr();
     while(!find_qr && is_autonomous_mode && is_power_on){
       turn_right(50, 'a');
+      delay(2000);
       find_qr = look_for_qr();
       Blynk.run();    
     }

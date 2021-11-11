@@ -9,9 +9,9 @@
 
 HUSKYLENS huskylens;
 
-int value_servo1 = 1900;
-int value_servo2 = 1900;
-int value_servo3 = 1900;
+int value_servo1 = 1550;
+int value_servo2 = 1550;
+int value_servo3 = 1550;
 
 bool is_power_on = false;
 bool is_autonomous_mode = false;
@@ -152,53 +152,59 @@ bool look_for_qr(){
 
 void autonomous_main(){
   while(is_autonomous_mode){
-    bool find_qr = look_for_qr();
-    while(!find_qr && is_autonomous_mode && is_power_on){
-      turn_right(500, 'a');
-      delay(2000);
-      for (int trial = 0; trial < 10; trial++){
-        find_qr = look_for_qr();
-        if (find_qr) break;
+    Serial.println(F("Reach if"));
+    if (result.ID == 1){
+      bool find_qr = look_for_qr();
+      while(!find_qr && is_autonomous_mode && is_power_on){
+        turn_right(500, 'a');
+        delay(2000);
+        for (int trial = 0; trial < 10; trial++){
+          find_qr = look_for_qr();
+          if (find_qr) break;
+          delay(100);
+        }
         delay(100);
+        Blynk.run();
       }
-      delay(100);
+      while(result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin){
+        if (result.xCenter <= value_xmargin){
+          turn_right(10, 'a');// decide me!
+        }
+        else if (result.xCenter >= 320 - value_xmargin){
+          turn_left(10, 'a');//decide me!
+        }
+      }      
+      go_straight(1000, 'a');
       Blynk.run();
+    } else if (result.ID == 2){
+      //ID==2のQRコードのみ見えているとき
+      bool find_qr = look_for_qr();
+        while(!find_qr && is_autonomous_mode && is_power_on){
+          turn_right(500, 'n');
+          delay(2000);
+          for (int trial = 0; trial < 10; trial++){
+            find_qr = look_for_qr();
+            if (find_qr) break;
+            delay(100);
+          }
+          delay(100);
+          Blynk.run();
+        }
+        while(result.xCenter <= value_near_xmargin || result.xCenter >= 320 - value_near_xmargin){
+          if (result.xCenter <= value_near_xmargin){
+            turn_right(10, 'n');// decide me!
+          }
+          else if (result.xCenter >= 320 - value_near_xmargin){
+            turn_left(10, 'n');//decide me!
+          }
+        }      
+        go_straight(1000, 'n');//decide me!
+        Blynk.run();
     }
-    while(result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin){
-      if (result.xCenter <= value_xmargin){
-        turn_right(10, 'a');// decide me!
-      }
-      else if (result.xCenter >= 320 - value_xmargin){
-        turn_left(10, 'a');//decide me!
-      }
-    }      
-    go_straight(1000, 'a');
-    Blynk.run();
+    
   }//近づいた時にどうするか+回転止める
   
-  //ID==2のQRコードのみ見えているとき
-  bool find_qr = look_for_qr();
-    while(!find_qr && is_autonomous_mode && is_power_on){
-      turn_right(500, 'n');
-      delay(2000);
-      for (int trial = 0; trial < 10; trial++){
-        find_qr = look_for_qr();
-        if (find_qr) break;
-        delay(100);
-      }
-      delay(100);
-      Blynk.run();
-    }
-    while(result.xCenter <= value_near_xmargin || result.xCenter >= 320 - value_near_xmargin){
-      if (result.xCenter <= value_near_xmargin){
-        turn_right(10, 'n');// decide me!
-      }
-      else if (result.xCenter >= 320 - value_near_xmargin){
-        turn_left(10, 'n');//decide me!
-      }
-    }      
-    go_straight(1000, 'n');//decide me!
-    Blynk.run();
+  
 
     
   Serial.println("quit mode");

@@ -36,7 +36,7 @@ const int value_right3 = 1450;
 const int value_left1 = 1500; // decide me!
 const int value_left2 = 1550;
 const int value_left3 = 1550;
-const int value_xmargin = 50; // decide me!
+const int value_xmargin = 80; // decide me!
 
 //ID==2のQRコードのとき（十分近づいたとき）
 const int value_near_straight1 = 1550; // decide me!
@@ -163,29 +163,51 @@ void autonomous_main(){
   while(is_autonomous_mode && is_power_on){
     bool find_qr = look_for_qr();
     while(!find_qr && is_autonomous_mode && is_power_on){
-      turn_right(50, 'a');
+      turn_right(100, 'a');
       delay(2000);
       find_qr = look_for_qr();
       Blynk.run();    
     }
-    if (!is_center(result.xCenter)){
-      if (result.xCenter <= value_xmargin){
-        turn_right(10, 'a');
-      }else{
-        turn_left(10, 'a');
+    if (result.ID == 1){
+      if (!is_center(result.xCenter)){
+        if (result.xCenter <= value_xmargin){
+          turn_right(10, 'a');
+        }else{
+          turn_left(10, 'a');
+        }
+        find_qr = false;
+        for (int i = 0; i < 10; i++){
+          find_qr = look_for_qr();
+          if (find_qr) break;
+        }
       }
-      find_qr = false;
-      for (int i = 0; i < 10; i++){
-        find_qr = look_for_qr();
-        if (find_qr) break;
-     }
+      if (is_center(result.xCenter)){
+        go_straight(300, 'a');
+        delay(2000);
+      }
+      Blynk.run();
+    }else if (result.ID == 2){
+      if (!is_center(result.xCenter)){
+        if (result.xCenter <= value_near_xmargin){
+          turn_right(10, 'n');
+        }else{
+          turn_left(10, 'n');
+        }
+        find_qr = false;
+        for (int i = 0; i < 10; i++){
+          find_qr = look_for_qr();
+          if (find_qr) break;
+        }
+      }
+      if (is_center(result.xCenter)){
+        go_straight(300, 'n');
+        delay(2000);
+      }
+      Blynk.run();
     }
-    if (is_center(result.xCenter)){
-      go_straight(300, 'a');
-    }
-    Blynk.run();
-  }
-    
+    //ドッキングの条件
+    //バックのプログラム
+  } 
  }//近づいた時にどうするか+回転止める
   
   

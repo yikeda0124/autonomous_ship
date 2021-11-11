@@ -151,10 +151,11 @@ bool look_for_qr(){
 }
 
 void autonomous_main(){
+  stop_servos();
   while(is_autonomous_mode){
     Serial.println(F("Reach if"));
-    if (result.ID == 1){
-      bool find_qr = look_for_qr();
+    bool find_qr = look_for_qr();
+    if (result.ID == 1){      
       while(!find_qr && is_autonomous_mode && is_power_on){
         turn_right(500, 'a');
         delay(2000);
@@ -178,7 +179,6 @@ void autonomous_main(){
       Blynk.run();
     } else if (result.ID == 2){
       //ID==2のQRコードのみ見えているとき
-      bool find_qr = look_for_qr();
         while(!find_qr && is_autonomous_mode && is_power_on){
           turn_right(500, 'n');
           delay(2000);

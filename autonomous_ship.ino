@@ -19,6 +19,7 @@ bool is_autonomous_mode = false;
 Servo servo1;
 Servo servo2;
 Servo servo3;
+HUSKYLENSResult result;
 const int maxUs = 1900;
 const int minUs = 1100;
 const int servo1Pin = 25;
@@ -44,13 +45,13 @@ void setup()
 {
   Serial.begin(115200);
   Blynk.begin(BLINK_API_KEY, WIFI_SSID, WIFI_PASSWORD);
-//  huskySerial.begin(9600);
-//  while (!huskylens.begin(huskySerial)){
-//    Serial.println(F("Begin failed!"));
-//    Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (General Settings>>Protocol Type>>Serial 9600)"));
-//    Serial.println(F("2.Please recheck the connection."));
-//    delay(100);
-//  }
+  huskySerial.begin(9600);
+  while (!huskylens.begin(huskySerial)){
+    Serial.println(F("Begin failed!"));
+    Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (General Settings>>Protocol Type>>Serial 9600)"));
+    Serial.println(F("2.Please recheck the connection."));
+    delay(100);
+  }
   servo1.attach(servo1Pin, minUs, maxUs);
   servo2.attach(servo2Pin, minUs, maxUs);
   servo3.attach(servo3Pin, minUs, maxUs);
@@ -70,7 +71,6 @@ void loop()
   }else{
     stop_servos();
   }
-  //digitalWrite(ElemagnetPin1,High);
 }
 
 void stop_servos(){
@@ -89,7 +89,7 @@ void turn_right(int tim){
 }
 
 void turn_left(int tim){
-  servo1.writeMicroseconds(value_leftt1);
+  servo1.writeMicroseconds(value_left1);
   servo2.writeMicroseconds(value_left2);
   servo3.writeMicroseconds(value_left3);
   delay(tim);
@@ -109,7 +109,7 @@ bool look_for_qr(){
   else if(!huskylens.isLearned()) Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
   else if(!huskylens.available()) Serial.println(F("No block or arrow appears on the screen!"));
   else{
-    HUSKYLENSResult result = huskylens.read();
+    result = huskylens.read();
     printResult(result);  
     return true;
   }
@@ -120,17 +120,17 @@ void autonomous_main(){
   while(is_autonomous_mode){
     bool find_qr = look_for_qr();
     while(!find_qr && is_autonomous_mode && is_power_on){
-      turn_right(500);
+      turn_right(200);
       delay(2000);
       for (int trial = 0; trial < 10; trial++){
         find_qr = look_for_qr();
         if (find_qr) break;
-        delay(100);
+        delay(50);
       }
       delay(100);
       Blynk.run();
     }
-    while(result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin){
+    while(is_autonomous_mode && is_power_on && (result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin)){
       Blynk.run();
       if (result.xCenter <= value_xmargin){
         turn_right(10);// decide me!

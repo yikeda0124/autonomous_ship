@@ -144,76 +144,55 @@ bool look_for_qr(){
   else if(!huskylens.available()) Serial.println(F("No block or arrow appears on the screen!"));
   else{
     result = huskylens.read();
-    printResult(result);  
+    //printResult(result);  
     return true;
   }
   
   return false;
 }
 
+bool is_center(int res){
+  if (res <= value_xmargin || res >= 320 - value_xmargin){
+    return false;
+  }
+  return true;
+}
+
 void autonomous_main(){
   stop_servos();
-  while(is_autonomous_mode){
-    Serial.println(F("Reach if"));
+  while(is_autonomous_mode && is_power_on){
     bool find_qr = look_for_qr();
-    if (result.ID == 1){      
-      while(!find_qr && is_autonomous_mode && is_power_on){
-        turn_right(50, 'a');
-        delay(2000);
-        for (int trial = 0; trial < 10; trial++){
-          find_qr = look_for_qr();
-          if (find_qr) break;
-          delay(100);
-        }
-        delay(100);
-        Blynk.run();
-      }
-      while(find_qr && (result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin) && is_autonomous_mode && is_power_on){
-        Blynk.run();
-        if (result.xCenter <= value_xmargin){
-          turn_right(10, 'a');// decide me!
-        }
-        else if (result.xCenter >= 320 - value_xmargin){
-          turn_left(10, 'a');//decide me!
-        }
-        find_qr = look_for_qr();
-      }
-      go_straight(500, 'a');
-      Blynk.run();
-    } else if (result.ID == 2){
-      //ID==2のQRコードのみ見えているとき
-        while(!find_qr && is_autonomous_mode && is_power_on){
-          turn_right(500, 'n');
-          delay(2000);
-          for (int trial = 0; trial < 10; trial++){
-            find_qr = look_for_qr();
-            if (find_qr) break;
-            delay(100);
-          }
-          delay(100);
-          Blynk.run();
-        }
-        while(find_qr && (result.xCenter <= value_near_xmargin || result.xCenter >= 320 - value_near_xmargin) && is_autonomous_mode && is_power_on){
-          Blynk.run();
-          if (result.xCenter <= value_near_xmargin){
-            turn_right(10, 'n');// decide me!
-          }
-          else if (result.xCenter >= 320 - value_near_xmargin){
-            turn_left(10, 'n');//decide me!
-          }
-          find_qr = look_for_qr();
-        }      
-        go_straight(300, 'n');//decide me!
-        Blynk.run();
+    while(!find_qr && is_autonomous_mode && is_power_on){
+      turn_right(50, 'a');
+      find_qr = look_for_qr();
+      Blynk.run();    
     }
+    if (!is_center(result.xCenter)){
+      if (result.xCenter <= value_xmargin){
+        turn_right(10, 'a');
+      }else{
+        turn_left(10, 'a');
+      }
+      find_qr = false;
+      for (int i = 0; i < 10; i++){
+        find_qr = look_for_qr();
+        if (find_qr) break;
+     }
+    }
+    if (is_center(result.xCenter)){
+      go_straight(300, 'a');
+    }
+    Blynk.run();
+  }
     
-  }//近づいた時にどうするか+回転止める
+ }//近づいた時にどうするか+回転止める
   
   
 
+
+
+
     
-  Serial.println("quit mode");
-}
 //320*240左上原点,横x軸縦y
 void printResult(HUSKYLENSResult result){
     if (result.command == COMMAND_RETURN_BLOCK){

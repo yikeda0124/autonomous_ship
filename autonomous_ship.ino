@@ -38,6 +38,19 @@ const int value_left2 = 1550;
 const int value_left3 = 1550;
 const int value_xmargin = 0; // decide me!
 
+//ID==2のQRコードのとき（十分近づいたとき）
+const int value_near_straight1 = 1550; // decide me!
+const int value_near_straight2 = 1500;
+const int value_near_straight3 = 1500;
+const int value_near_right1 = 1500; // decide me!
+const int value_near_right2 = 1450;
+const int value_near_right3 = 1450;
+const int value_near_left1 = 1500; // decide me!
+const int value_near_left2 = 1550;
+const int value_near_left3 = 1550;
+const int value_near_xmargin = 0; // decide me!
+
+
 
 SoftwareSerial huskySerial(huskyPin1, huskyPin2);
 
@@ -80,28 +93,47 @@ void stop_servos(){
 }
 
 
-void turn_right(int tim){
-  servo1.writeMicroseconds(value_right1);
-  servo2.writeMicroseconds(value_right2);
-  servo3.writeMicroseconds(value_right3);
+void turn_right(int tim, char mode){
+  if (mode=='n'){
+    servo1.writeMicroseconds(value_near_right1);
+    servo2.writeMicroseconds(value_near_right2);
+    servo3.writeMicroseconds(value_near_right3);
+  }else{
+    servo1.writeMicroseconds(value_right1);
+    servo2.writeMicroseconds(value_right2);
+    servo3.writeMicroseconds(value_right3);
+  }
   delay(tim);
   stop_servos();
 }
 
 
-void turn_left(int tim){
-  servo1.writeMicroseconds(value_left1);
-  servo2.writeMicroseconds(value_left2);
-  servo3.writeMicroseconds(value_left3);
+void turn_left(int tim, char mode){
+  if (mode=='n'){
+    servo1.writeMicroseconds(value_near_left1);
+    servo2.writeMicroseconds(value_near_left2);
+    servo3.writeMicroseconds(value_near_left3);
+  }else{
+    servo1.writeMicroseconds(value_left1);
+    servo2.writeMicroseconds(value_left2);
+    servo3.writeMicroseconds(value_left3);
+  }
   delay(tim);
   stop_servos();
 }
 
 
-void go_straight(int tim){
-  servo1.writeMicroseconds(value_straight1);
-  servo2.writeMicroseconds(value_straight2);
-  servo3.writeMicroseconds(value_straight3);
+void go_straight(int tim, char mode){
+  if (mode=='n'){
+    servo1.writeMicroseconds(value_near_straight1);
+    servo2.writeMicroseconds(value_near_straight2);
+    servo3.writeMicroseconds(value_near_straight3);  
+  }else{
+    servo1.writeMicroseconds(value_straight1);
+    servo2.writeMicroseconds(value_straight2);
+    servo3.writeMicroseconds(value_straight3);  
+  }
+  
   delay(tim);
   stop_servos();
 }
@@ -122,7 +154,7 @@ void autonomous_main(){
   while(is_autonomous_mode){
     bool find_qr = look_for_qr();
     while(!find_qr && is_autonomous_mode && is_power_on){
-      turn_right(500);
+      turn_right(500, 'a');
       delay(2000);
       for (int trial = 0; trial < 10; trial++){
         find_qr = look_for_qr();
@@ -134,15 +166,41 @@ void autonomous_main(){
     }
     while(result.xCenter <= value_xmargin || result.xCenter >= 320 - value_xmargin){
       if (result.xCenter <= value_xmargin){
-        turn_right(10);// decide me!
+        turn_right(10, 'a');// decide me!
       }
       else if (result.xCenter >= 320 - value_xmargin){
-        turn_left(10);//decide me!
+        turn_left(10, 'a');//decide me!
       }
     }      
-    go_straight(1000);
+    go_straight(1000, 'a');
     Blynk.run();
   }//近づいた時にどうするか+回転止める
+  
+  //ID==2のQRコードのみ見えているとき
+  bool find_qr = look_for_qr();
+    while(!find_qr && is_autonomous_mode && is_power_on){
+      turn_right(500, 'n');
+      delay(2000);
+      for (int trial = 0; trial < 10; trial++){
+        find_qr = look_for_qr();
+        if (find_qr) break;
+        delay(100);
+      }
+      delay(100);
+      Blynk.run();
+    }
+    while(result.xCenter <= value_near_xmargin || result.xCenter >= 320 - value_near_xmargin){
+      if (result.xCenter <= value_near_xmargin){
+        turn_right(10, 'n');// decide me!
+      }
+      else if (result.xCenter >= 320 - value_near_xmargin){
+        turn_left(10, 'n');//decide me!
+      }
+    }      
+    go_straight(1000, 'n');//decide me!
+    Blynk.run();
+
+    
   Serial.println("quit mode");
 }
 //320*240左上原点,横x軸縦y

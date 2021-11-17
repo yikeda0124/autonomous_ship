@@ -13,6 +13,8 @@ int value_servo1 = 1550;
 int value_servo2 = 1550;
 int value_servo3 = 1550;
 
+int start_time;
+
 bool is_power_on = false;
 bool is_autonomous_mode = false;
 
@@ -20,6 +22,7 @@ HUSKYLENSResult result;
 Servo servo1;
 Servo servo2;
 Servo servo3;
+
 const int maxUs = 1900;
 const int minUs = 1100;
 const int servo1Pin = 25;
@@ -156,6 +159,14 @@ bool is_center(int res){
     return false;
   }
   return true;
+}
+
+bool fin_time(){
+  if(millis()-start_time >= 170000){
+    return true;
+  }else{
+    return false;
+  }
 }
 
 void autonomous_main(){

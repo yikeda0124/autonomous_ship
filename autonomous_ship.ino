@@ -52,8 +52,9 @@ const int value_near_left1 = 1500; // decide me!
 const int value_near_left2 = 1550;
 const int value_near_left3 = 1550;
 const int value_near_xmargin = 60; // decide me!
-
-
+const int value_backward1 = 1100;
+const int value_backward2 = 1500;
+const int value_backward3 = 1500;
 
 SoftwareSerial huskySerial(huskyPin1, huskyPin2);
 
@@ -141,6 +142,14 @@ void go_straight(int tim, char mode){
   stop_servos();
 }
 
+void go_backward(int tim){
+  servo1.writeMicroseconds(value_backward1);
+  servo2.writeMicroseconds(value_backward2);
+  servo3.writeMicroseconds(value_backward3);
+  delay(tim);
+  stop_servos();
+}
+
 bool look_for_qr(){
   if (!huskylens.request()) Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
   else if(!huskylens.isLearned()) Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
@@ -170,6 +179,7 @@ bool fin_time(){
 }
 
 void autonomous_main(){
+  start_time = millis();
   stop_servos();
   while(is_autonomous_mode && is_power_on){
     bool find_qr = look_for_qr();
@@ -177,6 +187,10 @@ void autonomous_main(){
       turn_right(100, 'a');
       delay(1500);
       find_qr = look_for_qr();
+      if (fin_time()){
+          go_backward(1000);
+          delay(2000);
+      }
       Blynk.run();    
     }
     if (result.ID == 1){

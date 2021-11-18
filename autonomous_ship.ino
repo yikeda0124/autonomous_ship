@@ -183,6 +183,10 @@ void autonomous_main(){
   stop_servos();
   while(is_autonomous_mode && is_power_on){
     bool find_qr = look_for_qr();
+    if (fin_time()){
+      go_backward(1000);
+      delay(2000);
+    }
     while(!find_qr && is_autonomous_mode && is_power_on){
       turn_right(100, 'a');
       delay(1500);
